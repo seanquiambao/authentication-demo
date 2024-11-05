@@ -1,6 +1,9 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { ReactQueryClientProvider } from "@/utils/react-query";
+import { SessionProvider } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { options } from "@/utils/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,12 +16,18 @@ type LayoutProps = {
   children: React.ReactNode;
 };
 
-export default function RootLayout({ children }: LayoutProps) {
+const RootLayout = async ({ children }: LayoutProps) => {
+  const session = await getServerSession(options);
+
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ReactQueryClientProvider>{children}</ReactQueryClientProvider>
+        <SessionProvider session={session}>
+          <ReactQueryClientProvider>{children}</ReactQueryClientProvider>
+        </SessionProvider>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;
